@@ -82,6 +82,7 @@ pub enum FinalTransactionState {
 /// trx.add_operation(RollbackOperation::RemoveFile("some/path".into()));
 /// trx.commit(); // No rollback will happen
 /// ```
+#[derive(Default)]
 pub struct Transaction<State: TransactionState> {
     rollback_operations: Vec<RollbackOperation>,
     state: PhantomData<State>,
@@ -130,20 +131,24 @@ impl Transaction<Active> {
 impl<S: TransactionState> Drop for Transaction<S> {
     fn drop(&mut self) {
         if S::SHOULD_ROLLBACK && !self.rollback_operations.is_empty() {
+            #[cfg(feature = "logging")]
             log::debug!("⚠️...rolling back operations");
             while let Some(operation) = self.rollback_operations.pop() {
                 match operation {
                     RollbackOperation::RemoveDir(path) => {
+                        #[cfg(feature = "logging")]
                         log::debug!("🚨...removing dir: {}", path.display());
                         let _ = fs::remove_dir_all(&path);
                     }
                     RollbackOperation::RemoveFile(path) => {
+                        #[cfg(feature = "logging")]
                         log::debug!("🚨...removing file: {}", path.display());
                         let _ = fs::remove_file(&path);
                     }
                 }
             }
         } else if !S::SHOULD_ROLLBACK {
+            #[cfg(feature = "logging")]
             log::debug!("...committing transaction ✅");
         }
     }

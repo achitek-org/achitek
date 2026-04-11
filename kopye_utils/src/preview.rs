@@ -114,7 +114,7 @@ fn print_tree(node: &Rc<RefCell<TreeNode>>, prefix: &str, is_last: bool) {
     }
 }
 
-pub fn preview_as_tree(vfs: &VirtualFS, destination: &Path) {
+pub fn as_tree(vfs: &VirtualFS, destination: &Path) {
     let tree_root = build_tree(vfs, destination);
 
     println!(

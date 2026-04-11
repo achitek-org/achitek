@@ -1,0 +1,17 @@
+[package]
+name = "kopye_utils"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+thiserror = "2"
+log = { version = "0.4", optional = true }
+miette = { version = "7.0", optional = true }
+tera = "1.20.0"
+walkdir = "2.5.0"
+colored = "3.0.0"
+
+[features]
+default = ["logging", "diagnostics"]
+logging = ["log"]
+diagnostics = ["miette"]

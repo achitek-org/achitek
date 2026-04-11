@@ -1,6 +1,7 @@
 use miette::Diagnostic;
 use thiserror::Error;
 
+// TODO: Move to kopye_utils crate (needed for VFS operations)
 #[derive(Debug, Error, Diagnostic)]
 pub enum FileOperation {
     #[error("reading a file")]
