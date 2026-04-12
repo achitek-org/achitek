@@ -46,7 +46,7 @@ pub struct BlueprintInfo {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Source {
-    pub projects: IndexMap<String, BlueprintInfo>,
+    pub blueprints: IndexMap<String, BlueprintInfo>,
     pub source_dir: PathBuf,
 }
 impl Source {
@@ -93,6 +93,12 @@ impl Source {
 
             let expanded_url = Source::expand_git_short_url(source)?;
 
+            log::debug!(
+                "Cloning repository {} to temporary directory: {}",
+                expanded_url,
+                directory.display()
+            );
+
             Repository::clone(&expanded_url, directory.as_path()).map_err(|err| {
                 SourceError::GitClone {
                     url: expanded_url.clone(),
@@ -111,14 +117,16 @@ impl Source {
         let content = fs::read_to_string(source_file.clone())
             .map_err(|error| IoError::new(FileOperation::Read, source_file.clone(), error))?;
 
+        log::debug!("Blueprint: \n{}", content);
+
         let parsed = toml::from_str(&content).map_err(|err| SourceError::ParseToml {
             path: source_file.clone(),
             source: err,
         })?;
 
         Ok(Source {
+            blueprints: parsed,
             source_dir: source_directory,
-            projects: parsed, // TODO: rename to blueprints
         })
     }
 }

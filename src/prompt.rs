@@ -326,7 +326,7 @@ pub fn get_answers(template_path: &Path) -> Result<IndexMap<String, Answer>, Pro
 }
 
 pub fn get_project(config: Source) -> Result<String, PromptError> {
-    let choices = config.projects.keys().collect();
+    let choices = config.blueprints.keys().collect();
 
     let question = String::from("Select template:");
 

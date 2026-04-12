@@ -91,7 +91,7 @@ pub fn try_render(
     destination: &str,
 ) -> Result<FinalTransactionState, TemplateError> {
     let path_to_blueprint = config
-        .projects
+        .blueprints
         .get(template)
         .ok_or_else(|| TemplateError::ProjectNotFound {
             name: template.to_string(),

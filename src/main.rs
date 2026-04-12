@@ -20,6 +20,15 @@ enum Commands {
     Copy {
         #[arg(
             help = "git repository reference where templates live",
+            long_help = r#"
+git repository reference where templates live
+
+Examples:
+  gh:account/repo              - GitHub repository
+  gl:account/repo              - GitLab repository
+  git@host:account/repo.git    - SSH git URL
+  git+https://example.com/...  - HTTPS git URL
+            "#,
             required = true
         )]
         repo: String,
@@ -34,7 +43,16 @@ enum Commands {
     #[command(about = "list template")]
     List {
         #[arg(
-            help = "git repository reference where templates live", // <--------- OR local dir
+            help = "git repository reference where templates live",
+            long_help = r#"
+git repository reference where templates live
+
+Examples:
+  gh:account/repo              - GitHub repository
+  gl:account/repo              - GitLab repository
+  git@host:account/repo.git    - SSH git URL
+  git+https://example.com/...  - HTTPS git URL
+            "#,
             required = true
         )]
         repo: String,
