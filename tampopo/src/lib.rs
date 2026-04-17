@@ -1,9 +1,18 @@
-// ported and modified from: https://github.com/TheAlgorithms/Rust/blob/master/src/graph/topological_sort.rs
+//! A topological sorting library implementing Kahn's algorithm for directed acyclic graphs (DAGs).
+//!
+//! This module provides functionality to perform topological sorting on graphs, which is useful
+//! for tasks like dependency resolution, task scheduling, and build systems.
+//!
+//! Ported and modified from: <https://github.com/TheAlgorithms/Rust/blob/master/src/graph/topological_sort.rs>
+
 use errors::SortError;
 use std::collections::{HashMap, VecDeque};
 pub mod errors;
 
-/// A type alias representing a directed graph as a list of edges, where each
+/// A type alias representing a directed graph as an adjacency list of edges.
+///
+/// Each edge is represented as a tuple `(source, destination)` where the first element
+/// is the source node and the second element is the destination node
 pub type DAGAsAdjacencyList<Node> = Vec<(Node, Node)>;
 
 /// A graph data structure used for topological sorting.

@@ -1,5 +1,12 @@
+//! Error types for topological sorting operations.
+
+/// Errors that can occur during topological sorting of a directed acyclic graph (DAG).
 #[derive(Debug, Eq, PartialEq)]
 pub enum SortError<Node> {
+    /// A cycle was detected in the graph, making topological sorting impossible.
+    ///
+    /// Contains a vector of edges `(source, destination)` that form or are part of the cycle.
+    /// When a cycle exists, there is no valid topological ordering of the nodes.
     CycleDetected(Vec<(Node, Node)>),
 }
 

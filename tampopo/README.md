@@ -3,8 +3,6 @@ Lightweight (💪 ) Rust library that implements topological sorting for directe
 
 > Undiagnosed dyslexia might have made me type [tampopo](https://en.wikipedia.org/wiki/Tampopo) instead of topological. Not deep at all 🙃
 
-![Human-made](https://img.shields.io/badge/Human--made-hotpink?style=flat-square&labelColor=ff69b4&color=ff1493)...mostly...🤭
-
 
 ## Example
 ```rs

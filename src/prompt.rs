@@ -295,9 +295,11 @@ fn check_dependency(dep: &str, answers: &IndexMap<String, Answer>) -> bool {
 
 /// Processes the questions file and gathers user answers.
 ///
-/// This function reads a blueprint TOML file, constructs a dependency graph,
-/// computes a topological order (with stabilization), and then prompts the user for answers
-/// based on each question's configuration and dependencies.
+/// This function:
+/// - reads a blueprint TOML file
+/// - constructs a dependency graph,
+/// - computes a topological order (with stabilization)
+/// - prompts the user for answers based on each question's configuration and dependencies.
 pub fn get_answers(template_path: &Path) -> Result<IndexMap<String, Answer>, PromptError> {
     let file = QuestionsFile::from_file(template_path.join("blueprint.toml"))?;
     let nodes: Vec<String> = file.0.keys().cloned().collect();
