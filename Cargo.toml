@@ -8,6 +8,7 @@ members = [".", "tampopo", "kopye_utils"]
 resolver = "2"
 
 [dependencies]
+achitekfile = { package = "achitek", path = "../achitekfile" }
 kopye_utils = { path = "./kopye_utils" }
 clap = { version ="4.5.30", features= ["cargo", "derive"] }
 colored = "3.0.0"
