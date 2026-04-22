@@ -176,7 +176,7 @@ pub fn apply_vfs(
 ///
 /// # Errors
 ///
-/// Returns a [`KopyeError`] if any directory creation fails due to I/O issues.
+/// Returns a [`AchitekError`] if any directory creation fails due to I/O issues.
 fn create_directory(trx: &mut Transaction<Active>, path: &std::path::Path) -> Result<(), VfsError> {
     std::fs::create_dir_all(path)
         .map_err(|error| IoError::new(FileOperation::Mkdir, path.into(), error))?;
@@ -193,7 +193,7 @@ fn create_directory(trx: &mut Transaction<Active>, path: &std::path::Path) -> Re
 ///
 /// # Errors
 ///
-/// Returns a [`KopyeError`] if writing to the file fails due to I/O issues.
+/// Returns a [`AchitekError`] if writing to the file fails due to I/O issues.
 fn write_file(
     trx: &mut Transaction<Active>,
     path: &std::path::Path,

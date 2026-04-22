@@ -17,11 +17,11 @@ pub enum FileOperation {
 #[cfg_attr(feature = "diagnostics", derive(Diagnostic))]
 pub enum VfsError {
     #[error("I/O error within VFS operations")]
-    #[cfg_attr(feature = "diagnostics", diagnostic(code(kopye_utils::vfs::io)))]
+    #[cfg_attr(feature = "diagnostics", diagnostic(code(achitek_utils::vfs::io)))]
     Io(#[from] IoError),
 
     #[error("Error occurrend attempting to render template")]
-    #[cfg_attr(feature = "diagnostics", diagnostic(code(kopye_utils::vfs::render)))]
+    #[cfg_attr(feature = "diagnostics", diagnostic(code(achitek_utils::vfs::render)))]
     Render {
         context: Context,
         #[source]
@@ -29,7 +29,7 @@ pub enum VfsError {
     },
 
     #[error("unable to strip prefix from directory")]
-    #[cfg_attr(feature = "diagnostics", diagnostic(code(kopye_utils::vfs::strip_prefix)))]
+    #[cfg_attr(feature = "diagnostics", diagnostic(code(achitek_utils::vfs::strip_prefix)))]
     StripPrefix {
         path: std::path::PathBuf,
         dir: std::path::PathBuf,
@@ -43,7 +43,7 @@ pub enum VfsError {
 #[cfg_attr(
     feature = "diagnostics",
     diagnostic(
-        code(kopye_utils::io),
+        code(achitek_utils::io),
         help("Check file permissions, disk space, or that the path is correct.")
     )
 )]

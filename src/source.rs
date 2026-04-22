@@ -9,11 +9,11 @@ use thiserror::Error;
 #[derive(Error, Debug, Diagnostic)]
 pub enum SourceError {
     #[error("I/O error within source domain")]
-    #[diagnostic(code(kopye::source::io))]
+    #[diagnostic(code(achitek::source::io))]
     Io(#[from] IoError),
 
     #[error("Unable to parse toml file at '{path}': {source}")]
-    #[diagnostic(code(kopye::source::parse_toml), help("Review toml file"))]
+    #[diagnostic(code(achitek::source::parse_toml), help("Review toml file"))]
     ParseToml {
         path: PathBuf,
         #[source]
@@ -22,7 +22,7 @@ pub enum SourceError {
 
     #[error("unable to clone repo at: '{url}': {source}")]
     #[diagnostic(
-        code(kopye::source::git_clone),
+        code(achitek::source::git_clone),
         help("Make sure that username and project name are correct")
     )]
     GitClone {
@@ -33,7 +33,7 @@ pub enum SourceError {
 
     #[error("invalid github prefix provided: {url}")]
     #[diagnostic(
-        code(kopye::source::invalid_git_prefix),
+        code(achitek::source::invalid_git_prefix),
         help("Valid git prefix are: ['gh', 'gl']")
     )]
     InvalidGitPrefix { url: String },

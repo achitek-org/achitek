@@ -1,5 +1,5 @@
 {
-  description = "kopye cli flake";
+  description = "achitek development environment";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -30,7 +30,7 @@
       in
       {
         packages.default = pkgs.rustPlatform.buildRustPackage {
-          pname = "kopye";
+          pname = "achitek";
           version = "0.0.0";
           cargoLock = {
             lockFile = ./Cargo.lock;

@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 use env_logger::Builder;
-use kopye::api::KopyeError;
+use achitek::api::AchitekError;
 use log::LevelFilter;
 use miette::Result as MietteResult;
 
@@ -96,10 +96,10 @@ fn init_logger(verbose: bool) {
     builder.init();
 }
 
-fn handle_copy(repo: String, template: String, destination: String) -> Result<(), KopyeError> {
-    kopye::api::copy_template(&repo, &template, &destination)
+fn handle_copy(repo: String, template: String, destination: String) -> Result<(), AchitekError> {
+    achitek::api::copy_template(&repo, &template, &destination)
 }
 
-fn handle_list(repo: String) -> Result<(), KopyeError> {
-    kopye::api::list_templates(&repo)
+fn handle_list(repo: String) -> Result<(), AchitekError> {
+    achitek::api::list_templates(&repo)
 }
