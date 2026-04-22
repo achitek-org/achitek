@@ -35,8 +35,8 @@ impl IoError {
 
 #[derive(Debug, Error, Diagnostic)]
 pub enum FileFormat {
-    #[error("toml")]
-    Toml,
+    #[error("achitekfile")]
+    Achitekfile,
 }
 #[derive(Debug, Error, Diagnostic)]
 #[error("Parsing error: {file_format} on '{path}'")]
@@ -45,14 +45,17 @@ pub struct ParseError {
     pub file_format: FileFormat,
     pub path: std::path::PathBuf,
     #[source]
-    pub source: toml::de::Error,
+    pub source: Box<dyn std::error::Error + Send + Sync + 'static>,
 }
 impl ParseError {
-    pub fn new(file_format: FileFormat, path: std::path::PathBuf, error: toml::de::Error) -> Self {
+    pub fn new<E>(file_format: FileFormat, path: std::path::PathBuf, error: E) -> Self
+    where
+        E: std::error::Error + Send + Sync + 'static,
+    {
         Self {
             file_format,
             path,
-            source: error,
+            source: Box::new(error),
         }
     }
 }

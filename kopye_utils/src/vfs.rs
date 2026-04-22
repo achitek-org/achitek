@@ -8,6 +8,7 @@ use tera::{Context, Tera};
 use walkdir::WalkDir;
 
 const TERA_FILE_EXTENSION: &str = "tera";
+const CONFIG_FILE_NAME: &str = "Achitekfile";
 
 /// Represents a virtual file or directory entry to be created in memory before writing to disk.
 ///
@@ -62,9 +63,9 @@ pub fn build_vfs(
             }
         };
 
-        // skip blueprint config file
+        // skip template configuration file
         let file_name = entry.file_name().to_string_lossy();
-        if file_name == "blueprint.toml" {
+        if file_name == CONFIG_FILE_NAME {
             continue;
         }
 
