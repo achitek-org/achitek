@@ -1,7 +1,7 @@
 use miette::Diagnostic;
 use thiserror::Error;
 
-// TODO: Move to kopye_utils crate (needed for VFS operations)
+// TODO: Move to achitek_utils crate (needed for VFS operations)
 #[derive(Debug, Error, Diagnostic)]
 pub enum FileOperation {
     #[error("reading a file")]
@@ -14,7 +14,7 @@ pub enum FileOperation {
 #[derive(Debug, Error, Diagnostic)]
 #[error("I/O error: {operation} on path '{path}'")]
 #[diagnostic(
-    code(kopye::io),
+    code(achitek::io),
     help("Check file permissions, disk space, or that the path is correct.")
 )]
 pub struct IoError {
@@ -40,7 +40,7 @@ pub enum FileFormat {
 }
 #[derive(Debug, Error, Diagnostic)]
 #[error("Parsing error: {file_format} on '{path}'")]
-#[diagnostic(code(kopye::parse), help("Review file"))]
+#[diagnostic(code(achitek::parse), help("Review file"))]
 pub struct ParseError {
     pub file_format: FileFormat,
     pub path: std::path::PathBuf,

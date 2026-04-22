@@ -5,7 +5,7 @@ use crate::{
 };
 
 #[derive(Debug, thiserror::Error, miette::Diagnostic)]
-pub enum KopyeError {
+pub enum AchitekError {
     #[error(transparent)]
     #[diagnostic(transparent)]
     Source(#[from] source::SourceError),
@@ -23,13 +23,13 @@ pub enum KopyeError {
 ///
 /// # Errors
 ///
-/// Returns a [`KopyeError`] if:
+/// Returns a [`AchitekError`] if:
 ///
 /// - The configuration could not be built from the `source`.
 /// - The template or its files cannot be located or read.
 /// - A directory or file cannot be created or written to.
 /// - Tera fails to initialize or render a template.
-pub fn copy_template(src: &str, template: &str, destination: &str) -> Result<(), KopyeError> {
+pub fn copy_template(src: &str, template: &str, destination: &str) -> Result<(), AchitekError> {
     let source = Source::build_from(src)?;
 
     log::debug!(
@@ -50,14 +50,14 @@ pub fn copy_template(src: &str, template: &str, destination: &str) -> Result<(),
 ///
 /// # Errors
 ///
-/// Returns a [`KopyeError`] if:
+/// Returns a [`AchitekError`] if:
 ///
 /// - The configuration could not be built from the `source`.
 /// - User prompts fail or the user cancels the input.
 /// - The template or its files cannot be located or read.
 /// - A directory or file cannot be created or written to.
 /// - Tera fails to initialize or render a template.
-pub fn list_templates(src: &str) -> Result<(), KopyeError> {
+pub fn list_templates(src: &str) -> Result<(), AchitekError> {
     let source = Source::build_from(src)?;
 
     let template = prompt::get_project(source.clone())?;

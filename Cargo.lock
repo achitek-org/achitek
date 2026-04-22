@@ -6,6 +6,44 @@ version = 4
 name = "achitek"
 version = "0.1.0"
 dependencies = [
+ "achitek_utils",
+ "achitekfile",
+ "assert_cmd",
+ "clap",
+ "colored",
+ "env_logger",
+ "git2",
+ "indexmap",
+ "inquire",
+ "lazy_static",
+ "log",
+ "miette",
+ "predicates",
+ "regex",
+ "serde",
+ "tempfile",
+ "tera",
+ "thiserror 2.0.18",
+ "toml",
+ "walkdir",
+]
+
+[[package]]
+name = "achitek_utils"
+version = "0.1.0"
+dependencies = [
+ "colored",
+ "log",
+ "miette",
+ "tera",
+ "thiserror 2.0.18",
+ "walkdir",
+]
+
+[[package]]
+name = "achitekfile"
+version = "0.1.0"
+dependencies = [
  "thiserror 2.0.18",
  "tree-sitter",
  "tree-sitter-achitekfile",
@@ -896,45 +934,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kopye"
-version = "0.1.0"
-dependencies = [
- "achitek",
- "assert_cmd",
- "clap",
- "colored",
- "env_logger",
- "git2",
- "indexmap",
- "inquire",
- "kopye_utils",
- "lazy_static",
- "log",
- "miette",
- "predicates",
- "regex",
- "serde",
- "tampopo",
- "tempfile",
- "tera",
- "thiserror 2.0.18",
- "toml",
- "walkdir",
-]
-
-[[package]]
-name = "kopye_utils"
-version = "0.1.0"
-dependencies = [
- "colored",
- "log",
- "miette",
- "tera",
- "thiserror 2.0.18",
- "walkdir",
-]
-
-[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1646,10 +1645,6 @@ dependencies = [
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "tampopo"
-version = "0.1.0"
 
 [[package]]
 name = "tempfile"

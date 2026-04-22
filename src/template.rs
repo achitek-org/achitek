@@ -4,7 +4,7 @@ use crate::{
     utils::normalize_path,
 };
 use indexmap::IndexMap;
-use kopye_utils::{
+use achitek_utils::{
     error::{IoError, VfsError},
     preview,
     transaction::{Active, FinalTransactionState, Transaction},
@@ -17,33 +17,33 @@ use thiserror::Error;
 #[derive(Debug, Error, Diagnostic)]
 pub enum TemplateError {
     #[error("I/O error within template domain")]
-    #[diagnostic(code(kopye::template::io))]
+    #[diagnostic(code(achitek::template::io))]
     Io(#[from] IoError),
 
     #[error("VFS operation failed")]
-    #[diagnostic(code(kopye::template::vfs))]
+    #[diagnostic(code(achitek::template::vfs))]
     Vfs(#[from] VfsError),
 
     #[error("Project not found with name: {name}")]
     #[diagnostic(
-        code(kopye::template::project_not_found),
+        code(achitek::template::project_not_found),
         help("Make sure project is available -> point to documentation about creating projects")
     )]
     ProjectNotFound { name: String },
 
     #[error("Error occurred trying to prompt user")]
-    #[diagnostic(code(kopye::template::prompt))]
+    #[diagnostic(code(achitek::template::prompt))]
     Prompt(#[from] PromptError),
 
     #[error("Error occurred trying to convert blueprint directory to string")]
     #[diagnostic(
-        code(kopye::template::invalid_project_string_unicode),
+        code(achitek::template::invalid_project_string_unicode),
         help("Please check the path")
     )]
     InvalidProjectStringUnicode { path: std::path::PathBuf },
 
     #[error("Error occurred attempting to initialize tera instance")]
-    #[diagnostic(code(kopye::template::tera_instance_initialization))]
+    #[diagnostic(code(achitek::template::tera_instance_initialization))]
     TeraInstanceInitialization {
         pattern: String,
         #[source]
@@ -51,11 +51,11 @@ pub enum TemplateError {
     },
 
     #[error("Error occurred attempting to generate out file name")]
-    #[diagnostic(code(kopye::template::generate_filename))]
+    #[diagnostic(code(achitek::template::generate_filename))]
     GenerateFileName { path: std::path::PathBuf },
 
     #[error("Error occurrend attempting to render template")]
-    #[diagnostic(code(kopye::template::render))]
+    #[diagnostic(code(achitek::template::render))]
     Render {
         context: Context,
         #[source]
@@ -63,7 +63,7 @@ pub enum TemplateError {
     },
 
     #[error("unable to strip prefix from directory")]
-    #[diagnostic(code(kopye::template::strip_prefix))]
+    #[diagnostic(code(achitek::template::strip_prefix))]
     StripPrefix {
         path: std::path::PathBuf,
         dir: std::path::PathBuf,

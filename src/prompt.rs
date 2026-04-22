@@ -20,15 +20,15 @@ const CONFIG_FILE_NAME: &str = "Achitekfile";
 #[derive(Debug, Error, Diagnostic)]
 pub enum PromptError {
     #[error("I/O error within prompt domain")]
-    #[diagnostic(code(kopye::prompt::io))]
+    #[diagnostic(code(achitek::prompt::io))]
     Io(#[from] IoError),
 
     #[error("Parsing error within prompt domain")]
-    #[diagnostic(code(kopye::prompt::parse))]
+    #[diagnostic(code(achitek::prompt::parse))]
     Parse(#[from] ParseError),
 
     #[error("I/O error within prompt domain")]
-    #[diagnostic(code(kopye::prompt::prompt))]
+    #[diagnostic(code(achitek::prompt::prompt))]
     Prompt {
         question: String,
         source: InquireError,

@@ -1,15 +1,15 @@
 [package]
-name = "kopye"
+name = "achitek"
 version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [".", "tampopo", "kopye_utils"]
+members = [".", "achitek_utils"]
 resolver = "2"
 
 [dependencies]
-achitekfile = { package = "achitek", path = "../achitekfile" }
-kopye_utils = { path = "./kopye_utils" }
+achitekfile = { package = "achitekfile", path = "../achitekfile" }
+achitek_utils = { path = "./achitek_utils" }
 clap = { version ="4.5.30", features= ["cargo", "derive"] }
 colored = "3.0.0"
 env_logger = "0.11.7"
@@ -19,7 +19,6 @@ log = "0.4.26"
 miette = { version = "7.5.0", features = ["fancy"] }
 regex = "1.11.1"
 serde = { version ="1.0.2", features = ["derive"] }
-tampopo = { path = "./tampopo" }
 tempfile = "3.17.1"
 tera = "1.20.0"
 thiserror = "2.0.11"
