@@ -15,33 +15,33 @@ use thiserror::Error;
 
 #[derive(Debug, Error, Diagnostic)]
 pub enum TemplateError {
-    #[error("I/O error within template domain")]
+    #[error("template file operation failed")]
     #[diagnostic(code(achitek::template::io))]
     Io(#[from] IoError),
 
-    #[error("VFS operation failed")]
+    #[error("failed to build or apply generated files")]
     #[diagnostic(code(achitek::template::vfs))]
     Vfs(#[from] VfsError),
 
-    #[error("Project not found with name: {name}")]
+    #[error("template not found: {name}")]
     #[diagnostic(
         code(achitek::template::project_not_found),
-        help("Make sure project is available -> point to documentation about creating projects")
+        help("Check the template name or run the list command to see available templates.")
     )]
     ProjectNotFound { name: String },
 
-    #[error("Error occurred trying to prompt user")]
+    #[error("failed to collect template prompt answers")]
     #[diagnostic(code(achitek::template::prompt))]
     Prompt(#[from] PromptError),
 
-    #[error("Error occurred trying to convert blueprint directory to string")]
+    #[error("blueprint path is not valid UTF-8: {path}")]
     #[diagnostic(
         code(achitek::template::invalid_project_string_unicode),
-        help("Please check the path")
+        help("Move or rename the blueprint directory to a path that can be represented as UTF-8.")
     )]
     InvalidProjectStringUnicode { path: std::path::PathBuf },
 
-    #[error("Error occurred attempting to initialize tera instance")]
+    #[error("failed to load template files with pattern: {pattern}")]
     #[diagnostic(code(achitek::template::tera_instance_initialization))]
     TeraInstanceInitialization {
         pattern: String,
@@ -49,11 +49,11 @@ pub enum TemplateError {
         source: tera::Error,
     },
 
-    #[error("Error occurred attempting to generate out file name")]
+    #[error("failed to generate output file name for path: {path}")]
     #[diagnostic(code(achitek::template::generate_filename))]
     GenerateFileName { path: std::path::PathBuf },
 
-    #[error("Error occurrend attempting to render template")]
+    #[error("failed to render template with collected answers")]
     #[diagnostic(code(achitek::template::render))]
     Render {
         context: Context,
@@ -61,7 +61,7 @@ pub enum TemplateError {
         source: tera::Error,
     },
 
-    #[error("unable to strip prefix from directory")]
+    #[error("failed to make path relative to blueprint directory: {path}")]
     #[diagnostic(code(achitek::template::strip_prefix))]
     StripPrefix {
         path: std::path::PathBuf,
@@ -70,19 +70,6 @@ pub enum TemplateError {
     },
 }
 
-/// Makes a [`Tera`] [`Context`] object, hydrated with user prompt answers.
-fn make_tera_context(answers: IndexMap<String, Answer>) -> Context {
-    let mut base_ctx = Context::new();
-    for (key, answer) in answers {
-        match answer {
-            Answer::String(ans) => base_ctx.insert(&key, &ans),
-            Answer::Bool(ans) => base_ctx.insert(&key, &ans),
-            Answer::Array(ans) => base_ctx.insert(&key, &ans),
-        }
-    }
-
-    base_ctx.clone()
-}
 /// Renders the specified template from the given [`Source`] into `destination`,
 pub fn try_render(
     config: Source,
@@ -124,4 +111,18 @@ pub fn try_render(
     } else {
         Ok(FinalTransactionState::Canceled(trx.cancel()))
     }
+}
+
+/// Makes a [`Tera`] [`Context`] object, hydrated with user prompt answers.
+fn make_tera_context(answers: IndexMap<String, Answer>) -> Context {
+    let mut base_ctx = Context::new();
+    for (key, answer) in answers {
+        match answer {
+            Answer::String(ans) => base_ctx.insert(&key, &ans),
+            Answer::Bool(ans) => base_ctx.insert(&key, &ans),
+            Answer::Array(ans) => base_ctx.insert(&key, &ans),
+        }
+    }
+
+    base_ctx.clone()
 }

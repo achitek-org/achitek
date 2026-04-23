@@ -3,6 +3,8 @@ use crate::{
     utils::transaction::{Active, RollbackOperation, Transaction},
 };
 use colored::Colorize;
+#[cfg(feature = "diagnostics")]
+use miette::Diagnostic;
 use std::path::{Path, PathBuf};
 use tera::{Context, Tera};
 use walkdir::WalkDir;

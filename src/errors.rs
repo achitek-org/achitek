@@ -1,5 +1,5 @@
+#[cfg(feature = "diagnostics")]
 use miette::Diagnostic;
-use thiserror::Error;
 
 #[derive(Debug, thiserror::Error)]
 #[cfg_attr(feature = "diagnostics", derive(Diagnostic))]
