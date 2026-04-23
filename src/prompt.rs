@@ -3,7 +3,8 @@ use crate::{
     source::Source,
 };
 use achitekfile::{
-    from_str, ComparisonOperator, Dependency as AchitekDependency, Prompt, PromptType, Value,
+    from_str, AstError, ComparisonOperator, Dependency as AchitekDependency, Prompt, PromptType,
+    Value,
 };
 use indexmap::IndexMap;
 use inquire::{
@@ -19,20 +20,36 @@ const CONFIG_FILE_NAME: &str = "Achitekfile";
 
 #[derive(Debug, Error, Diagnostic)]
 pub enum PromptError {
-    #[error("I/O error within prompt domain")]
-    #[diagnostic(code(achitek::prompt::io))]
+    #[error("failed to load prompt configuration")]
+    #[diagnostic(
+        code(achitek::prompt::io),
+        help("Check that the Achitekfile exists and that you have permission to read it.")
+    )]
     Io(#[from] IoError),
 
-    #[error("Parsing error within prompt domain")]
-    #[diagnostic(code(achitek::prompt::parse))]
+    #[error("failed to parse prompt configuration")]
+    #[diagnostic(
+        code(achitek::prompt::parse),
+        help("Review the Achitekfile syntax near the reported parse error.")
+    )]
     Parse(#[from] ParseError),
 
-    #[error("I/O error within prompt domain")]
-    #[diagnostic(code(achitek::prompt::prompt))]
+    #[error("failed to read answer for prompt question: {question}")]
+    #[diagnostic(
+        code(achitek::prompt::prompt),
+        help("Try answering the question again, or check whether the terminal input was interrupted.")
+    )]
     Prompt {
         question: String,
         source: InquireError,
     },
+
+    #[error("failed to build prompts from the Achitekfile")]
+    #[diagnostic(
+        code(achitek::prompt::ast),
+        help("Review prompt definitions and dependencies in the Achitekfile.")
+    )]
+    Ast(#[from] AstError),
 }
 
 #[derive(Debug, Error, Diagnostic)]
@@ -271,9 +288,7 @@ pub fn get_answers(template_path: &Path) -> Result<IndexMap<String, Answer>, Pro
         .map_err(|err| IoError::new(FileOperation::Read, config_path.clone(), err))?;
     let ast = from_str(&content)
         .map_err(|err| ParseError::new(FileFormat::Achitekfile, config_path.clone(), err))?;
-    let prompts = ast
-        .ordered_prompts()
-        .map_err(|err| ParseError::new(FileFormat::Achitekfile, config_path, err))?;
+    let prompts = ast.ordered_prompts()?;
     let mut answers = IndexMap::new();
 
     for prompt in prompts {
