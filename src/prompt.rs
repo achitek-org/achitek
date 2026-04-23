@@ -1,5 +1,5 @@
 use crate::{
-    errors::{FileFormat, FileOperation, IoError, ParseError},
+    errors::{FileOperation, IoError},
     source::Source,
 };
 use achitekfile::{
@@ -33,6 +33,34 @@ pub enum PromptError {
         question: String,
         source: InquireError,
     },
+}
+
+#[derive(Debug, Error, Diagnostic)]
+pub enum FileFormat {
+    #[error("achitekfile")]
+    Achitekfile,
+}
+
+#[derive(Debug, Error, Diagnostic)]
+#[error("Parsing error: {file_format} on '{path}'")]
+#[diagnostic(code(achitek::parse), help("Review file"))]
+pub struct ParseError {
+    pub file_format: FileFormat,
+    pub path: std::path::PathBuf,
+    #[source]
+    pub source: Box<dyn std::error::Error + Send + Sync + 'static>,
+}
+impl ParseError {
+    pub fn new<E>(file_format: FileFormat, path: std::path::PathBuf, error: E) -> Self
+    where
+        E: std::error::Error + Send + Sync + 'static,
+    {
+        Self {
+            file_format,
+            path,
+            source: Box::new(error),
+        }
+    }
 }
 
 /// Represents an answer to a prompt.

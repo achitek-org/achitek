@@ -6,7 +6,6 @@ version = 4
 name = "achitek"
 version = "0.1.0"
 dependencies = [
- "achitek_utils",
  "achitekfile",
  "assert_cmd",
  "clap",
@@ -25,18 +24,6 @@ dependencies = [
  "tera",
  "thiserror 2.0.18",
  "toml",
- "walkdir",
-]
-
-[[package]]
-name = "achitek_utils"
-version = "0.1.0"
-dependencies = [
- "colored",
- "log",
- "miette",
- "tera",
- "thiserror 2.0.18",
  "walkdir",
 ]
 

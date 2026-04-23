@@ -1,15 +1,14 @@
 use crate::{
+    errors::IoError,
     prompt::{apply_changes, get_answers, Answer, PromptError},
     source::Source,
-    utils::normalize_path,
+    utils::{
+        path, preview,
+        transaction::{Active, FinalTransactionState, Transaction},
+        vfs::{apply_vfs, build_vfs, VfsError},
+    },
 };
 use indexmap::IndexMap;
-use achitek_utils::{
-    error::{IoError, VfsError},
-    preview,
-    transaction::{Active, FinalTransactionState, Transaction},
-    vfs::{apply_vfs, build_vfs},
-};
 use miette::Diagnostic;
 use tera::{Context, Tera};
 use thiserror::Error;
@@ -99,7 +98,7 @@ pub fn try_render(
         .path
         .clone();
 
-    let blueprint_directory = config.source_dir.join(normalize_path(&path_to_blueprint));
+    let blueprint_directory = config.source_dir.join(path::normalize(&path_to_blueprint));
 
     let answers = get_answers(&blueprint_directory)?;
 

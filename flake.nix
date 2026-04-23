@@ -27,6 +27,12 @@
           inherit system overlays;
         };
         nix-lsp-server = nil.packages.${system}.nil;
+        rust-toolchain = pkgs.rust-bin.stable.latest.default.override {
+          extensions = [
+            "rust-analyzer"
+            "rust-src"
+          ];
+        };
       in
       {
         packages.default = pkgs.rustPlatform.buildRustPackage {
@@ -54,10 +60,9 @@
             buildInputs = [
               nix-lsp-server
               cargo-nextest
-              rust-analyzer
               openssl
               pkg-config # needed by openssl to locate headers and libraries
-              rust-bin.stable.latest.default
+              rust-toolchain
             ];
           };
       }

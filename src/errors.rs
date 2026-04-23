@@ -1,8 +1,8 @@
 use miette::Diagnostic;
 use thiserror::Error;
 
-// TODO: Move to achitek_utils crate (needed for VFS operations)
-#[derive(Debug, Error, Diagnostic)]
+#[derive(Debug, thiserror::Error)]
+#[cfg_attr(feature = "diagnostics", derive(Diagnostic))]
 pub enum FileOperation {
     #[error("reading a file")]
     Read,
@@ -11,11 +11,16 @@ pub enum FileOperation {
     #[error("creating a directory")]
     Mkdir,
 }
-#[derive(Debug, Error, Diagnostic)]
+
+#[derive(Debug, thiserror::Error)]
+#[cfg_attr(feature = "diagnostics", derive(Diagnostic))]
 #[error("I/O error: {operation} on path '{path}'")]
-#[diagnostic(
-    code(achitek::io),
-    help("Check file permissions, disk space, or that the path is correct.")
+#[cfg_attr(
+    feature = "diagnostics",
+    diagnostic(
+        code(achitek::io),
+        help("Check file permissions, disk space, or that the path is correct.")
+    )
 )]
 pub struct IoError {
     pub operation: FileOperation,
@@ -29,33 +34,6 @@ impl IoError {
             operation,
             path,
             source: error,
-        }
-    }
-}
-
-#[derive(Debug, Error, Diagnostic)]
-pub enum FileFormat {
-    #[error("achitekfile")]
-    Achitekfile,
-}
-#[derive(Debug, Error, Diagnostic)]
-#[error("Parsing error: {file_format} on '{path}'")]
-#[diagnostic(code(achitek::parse), help("Review file"))]
-pub struct ParseError {
-    pub file_format: FileFormat,
-    pub path: std::path::PathBuf,
-    #[source]
-    pub source: Box<dyn std::error::Error + Send + Sync + 'static>,
-}
-impl ParseError {
-    pub fn new<E>(file_format: FileFormat, path: std::path::PathBuf, error: E) -> Self
-    where
-        E: std::error::Error + Send + Sync + 'static,
-    {
-        Self {
-            file_format,
-            path,
-            source: Box::new(error),
         }
     }
 }
