@@ -3,13 +3,13 @@ name = "achitek"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = [".", "achitek_utils"]
-resolver = "2"
+[features]
+default = []
+diagnostics = []
+logging = []
 
 [dependencies]
 achitekfile = { package = "achitekfile", path = "../achitekfile" }
-achitek_utils = { path = "./achitek_utils" }
 clap = { version ="4.5.30", features= ["cargo", "derive"] }
 colored = "3.0.0"
 env_logger = "0.11.7"

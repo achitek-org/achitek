@@ -1,5 +1,4 @@
-// TEST:
-pub fn normalize_path(source: &String) -> std::path::PathBuf {
+pub fn normalize(source: &String) -> std::path::PathBuf {
     let input = std::path::PathBuf::from(source);
 
     let mut new_path = std::path::PathBuf::new();
@@ -20,4 +19,12 @@ pub fn normalize_path(source: &String) -> std::path::PathBuf {
     }
 
     new_path
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn name() {
+        todo!();
+    }
 }

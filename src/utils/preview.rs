@@ -1,4 +1,4 @@
-use crate::vfs::VirtualFS;
+use crate::utils::vfs::VirtualFS;
 use colored::Colorize;
 use std::cell::RefCell;
 use std::collections::HashMap;

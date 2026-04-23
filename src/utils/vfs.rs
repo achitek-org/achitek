@@ -1,6 +1,6 @@
 use crate::{
-    error::{FileOperation, IoError, VfsError},
-    transaction::{Active, RollbackOperation, Transaction},
+    errors::{FileOperation, IoError},
+    utils::transaction::{Active, RollbackOperation, Transaction},
 };
 use colored::Colorize;
 use std::path::{Path, PathBuf};
@@ -9,6 +9,33 @@ use walkdir::WalkDir;
 
 const TERA_FILE_EXTENSION: &str = "tera";
 const CONFIG_FILE_NAME: &str = "Achitekfile";
+
+#[derive(Debug, thiserror::Error)]
+#[cfg_attr(feature = "diagnostics", derive(Diagnostic))]
+pub enum VfsError {
+    #[error("I/O error within VFS operations")]
+    #[cfg_attr(feature = "diagnostics", diagnostic(code(achitek_utils::vfs::io)))]
+    Io(#[from] IoError),
+
+    #[error("Error occurrend attempting to render template")]
+    #[cfg_attr(feature = "diagnostics", diagnostic(code(achitek_utils::vfs::render)))]
+    Render {
+        context: Context,
+        #[source]
+        source: tera::Error,
+    },
+
+    #[error("unable to strip prefix from directory")]
+    #[cfg_attr(
+        feature = "diagnostics",
+        diagnostic(code(achitek_utils::vfs::strip_prefix))
+    )]
+    StripPrefix {
+        path: std::path::PathBuf,
+        dir: std::path::PathBuf,
+        source: std::path::StripPrefixError,
+    },
+}
 
 /// Represents a virtual file or directory entry to be created in memory before writing to disk.
 ///

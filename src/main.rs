@@ -1,6 +1,6 @@
+use achitek::api::AchitekError;
 use clap::{Parser, Subcommand};
 use env_logger::Builder;
-use achitek::api::AchitekError;
 use log::LevelFilter;
 use miette::Result as MietteResult;
 
