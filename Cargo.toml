@@ -9,7 +9,7 @@ diagnostics = []
 logging = []
 
 [dependencies]
-achitekfile = { package = "achitekfile", path = "../achitekfile" }
+achitekfile = "0.1.0"
 anyhow = "1.0.99"
 clap = { version ="4.5.30", features= ["cargo", "derive"] }
 colored = "3.0.0"
