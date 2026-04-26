@@ -31,6 +31,8 @@ dependencies = [
 [[package]]
 name = "achitekfile"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5503ba2a077f80030f6a1b57780051cd1b5d6790fad87d397422d1f388fdc2fa"
 dependencies = [
  "thiserror 2.0.18",
  "tree-sitter",
@@ -1818,7 +1820,8 @@ dependencies = [
 [[package]]
 name = "tree-sitter-achitekfile"
 version = "0.1.0"
-source = "git+https://github.com/achitek-org/tree-sitter-achitek?rev=877c24d#877c24d43801687b439cdeb167fd14ea60d26762"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aa6291a38c7a247e8081a60845a217ea87529d78280251ef4738721095f7864"
 dependencies = [
  "cc",
  "tree-sitter-language",
