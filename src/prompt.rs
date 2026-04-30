@@ -3,13 +3,13 @@ use crate::{
     source::Source,
 };
 use achitekfile::{
-    from_str, AstError, ComparisonOperator, Dependency as AchitekDependency, Prompt, PromptType,
-    Value,
+    AstError, ComparisonOperator, Dependency as AchitekDependency, Prompt, PromptType, Value,
+    from_str,
 };
 use indexmap::IndexMap;
 use inquire::{
-    required, validator::MinLengthValidator, Confirm, Editor, InquireError, MultiSelect, Select,
-    Text,
+    Confirm, Editor, InquireError, MultiSelect, Select, Text, required,
+    validator::MinLengthValidator,
 };
 use miette::Diagnostic;
 use serde::Serialize;
@@ -37,7 +37,9 @@ pub enum PromptError {
     #[error("failed to read answer for prompt question: {question}")]
     #[diagnostic(
         code(achitek::prompt::prompt),
-        help("Try answering the question again, or check whether the terminal input was interrupted.")
+        help(
+            "Try answering the question again, or check whether the terminal input was interrupted."
+        )
     )]
     Prompt {
         question: String,

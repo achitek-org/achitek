@@ -1,11 +1,11 @@
 use crate::{
     errors::IoError,
-    prompt::{apply_changes, get_answers, Answer, PromptError},
+    prompt::{Answer, PromptError, apply_changes, get_answers},
     source::Source,
     utils::{
         path, preview,
         transaction::{Active, FinalTransactionState, Transaction},
-        vfs::{apply_vfs, build_vfs, VfsError},
+        vfs::{VfsError, apply_vfs, build_vfs},
     },
 };
 use indexmap::IndexMap;

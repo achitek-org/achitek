@@ -1,7 +1,21 @@
 [package]
 name = "achitek"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
+rust-version = "1.90.0"
+description = "achitek cli"
+readme = "README.md"
+repository = "https://github.com/achitek-org/achitek"
+license = "MIT"
+keywords = ["achitek", "blueprints", "scaffolding", "project-template"]
+categories = ["command-line-utilities"]
+
+[[bin]]
+name = "achitek"
+path = "src/main.rs"
+
+[lib]
+path = "src/lib.rs"
 
 [features]
 default = []
@@ -27,7 +41,6 @@ toml = "0.9"
 walkdir = "2.5.0"
 inquire = { version = "0.9", features = ["editor"] }
 indexmap = { version = "2.7.1", features = ["serde"] }
-
 
 [dev-dependencies]
 assert_cmd = "2.0.16"
