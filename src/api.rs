@@ -5,8 +5,10 @@ use crate::{
 };
 use std::path::{Path, PathBuf};
 
+/// Errors returned by Achitek's public API operations.
 #[derive(Debug, thiserror::Error, miette::Diagnostic)]
 pub enum AchitekError {
+    /// The requested template name does not exist in the configured source.
     #[error("Template not found with name: {name}")]
     #[diagnostic(
         code(achitek::template_not_found),
@@ -14,6 +16,7 @@ pub enum AchitekError {
     )]
     TemplateNotFound { name: String },
 
+    /// The requested destination path already exists on disk.
     #[error("Destination already exists: {path}")]
     #[diagnostic(
         code(achitek::destination_already_exists),
@@ -21,6 +24,7 @@ pub enum AchitekError {
     )]
     DestinationAlreadyExists { path: PathBuf },
 
+    /// A lower-level source, template, prompt, or rendering operation failed.
     #[error("operation failed")]
     #[diagnostic(code(achitek::operation_failed))]
     OperationFailed {
@@ -56,6 +60,7 @@ impl From<prompt::PromptError> for AchitekError {
     }
 }
 
+#[doc(hidden)]
 fn ensure_destination_available(destination: &str) -> Result<(), AchitekError> {
     let path = Path::new(destination);
     if path.exists() {
