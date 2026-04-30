@@ -1,9 +1,9 @@
 {
-  description = "achitek development environment";
+  description = "Achitek-ls Development Environment";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.crane.url = "github:ipetkov/crane";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
@@ -13,58 +13,120 @@
 
   outputs =
     {
+      self,
+      crane,
       nil,
       nixpkgs,
-      rust-overlay,
       flake-utils,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
+        pkgs = nixpkgs.legacyPackages.${system};
+        craneLib = crane.mkLib pkgs;
+        achitekCrate = craneLib.crateNameFromCargoToml {
+          cargoToml = ./Cargo.toml;
         };
+
         nix-lsp-server = nil.packages.${system}.nil;
-        rust-toolchain = pkgs.rust-bin.stable.latest.default.override {
-          extensions = [
-            "rust-analyzer"
-            "rust-src"
-          ];
+
+        commonArgs = {
+          src = craneLib.cleanCargoSource ./.;
+
+          pname = "achitek";
+          inherit (achitekCrate) version;
+          strictDeps = true;
+
+          nativeBuildInputs = [ pkgs.pkg-config ];
+          buildInputs = [ pkgs.openssl ];
         };
+
+        cargoArtifacts = craneLib.buildDepsOnly (
+          commonArgs
+          // {
+            pname = "achitek";
+          }
+        );
+
+        achitek-clippy = craneLib.cargoClippy (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            cargoClippyExtraArgs = "--all-targets --all-features -- --deny warnings";
+          }
+        );
+
+        achitek-test = craneLib.cargoNextest (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            cargoNextestExtraArgs = "--workspace --all-features";
+          }
+        );
+
+        achitek-fmt = craneLib.cargoFmt {
+          src = commonArgs.src;
+        };
+
+        achitek = craneLib.buildPackage (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            cargoExtraArgs = "--bin achitek";
+          }
+        );
       in
       {
-        packages.default = pkgs.rustPlatform.buildRustPackage {
-          pname = "achitek";
-          version = "0.0.0";
-          cargoLock = {
-            lockFile = ./Cargo.lock;
-          };
-          src = pkgs.lib.cleanSource ./.;
-          # https://github.com/sfackler/rust-openssl/issues/948
-          nativeBuildInputs = [
-            pkgs.pkg-config
-          ];
-          buildInputs = [
-            pkgs.openssl.dev
-            pkgs.libiconv
-          ];
-          OPENSSL_STATIC = "0";
-          OPENSSL_INCLUDE_DIR =
-            (pkgs.lib.makeSearchPathOutput "dev" "include" [ pkgs.openssl.dev ]) + "/openssl";
+        packages = {
+          default = achitek;
+          achitek = achitek;
         };
-        devShells.default =
-          with pkgs;
-          mkShell {
-            buildInputs = [
-              nix-lsp-server
-              cargo-nextest
-              openssl
-              pkg-config # needed by openssl to locate headers and libraries
-              rust-toolchain
-            ];
+
+        apps = {
+          default = flake-utils.lib.mkApp {
+            drv = achitek;
+            name = "achitek";
           };
+          achitek = flake-utils.lib.mkApp {
+            drv = achitek;
+            name = "achitek";
+          };
+        };
+
+        checks = {
+          inherit
+            achitek
+            achitek-clippy
+            achitek-fmt
+            achitek-test
+            ;
+
+          default = achitek;
+        };
+
+        devShells.default = craneLib.devShell {
+          checks = self.checks.${system};
+
+          packages = with pkgs; [
+            achitek
+            cargo-dist
+            cargo-nextest
+            cargo-watch
+            just
+            nix-lsp-server
+            openssl
+            pkg-config # needed by openssl to locate headers and libraries
+            rust-analyzer
+            lefthook
+          ];
+
+          shellHook = ''
+            if [ ! -f .git/hooks/pre-commit ]; then
+              lefthook install
+            fi
+          '';
+        };
       }
     );
 }
