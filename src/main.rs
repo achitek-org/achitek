@@ -9,19 +9,19 @@ use miette::Result as MietteResult;
 struct Cli {
     #[command(subcommand)]
     commands: Commands,
-    #[arg(long, short, global = true, help = "Enable verbose output")]
+    #[arg(long, short, global = true, help = "Show detailed output")]
     // .action(ArgAction::SetTrue)
     verbose: bool,
 }
 
 #[derive(Debug, Clone, Subcommand)]
 enum Commands {
-    #[command(about = "Copies a template from a repo reference to a destination")]
+    #[command(about = "Copy a template from a repository to a directory")]
     Copy {
         #[arg(
-            help = "git repository reference where templates live",
+            help = "Reference to the Git repository that contains the templates. Use --help for examples.",
             long_help = r#"
-git repository reference where templates live
+Reference to the Git repository that contains the templates
 
 Examples:
   gh:account/repo              - GitHub repository
@@ -32,20 +32,17 @@ Examples:
             required = true
         )]
         repo: String,
-        #[arg(help = "template name", required = true)]
+        #[arg(help = "Name of the template", required = true)]
         template: String,
-        #[arg(
-            help = "The destination directory where the project will be created",
-            required = true
-        )]
+        #[arg(help = "Directory in which to create the project", required = true)]
         destination: String,
     },
-    #[command(about = "list template")]
+    #[command(about = "List templates in a repository")]
     List {
         #[arg(
-            help = "git repository reference where templates live",
+            help = "Reference to the Git repository that contains the templates. Use --help for examples.",
             long_help = r#"
-git repository reference where templates live
+Reference to the Git repository that contains the templates
 
 Examples:
   gh:account/repo              - GitHub repository
