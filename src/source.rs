@@ -31,12 +31,14 @@ pub enum SourceError {
         source: git2::Error,
     },
 
-    #[error("invalid github prefix provided: {url}")]
+    #[error("invalid git URL: {url}")]
     #[diagnostic(
-        code(achitek::source::invalid_git_prefix),
-        help("Valid git prefix are: ['gh', 'gl']")
+        code(achitek::source::invalid_git_url),
+        help(
+            "Use a local path, gh:account/repo, gl:account/repo, an SSH URL, or a git+https URL."
+        )
     )]
-    InvalidGitPrefix { url: String },
+    InvalidGitUrl { url: String },
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -73,13 +75,17 @@ impl Source {
         GIT_URL_REGEX.is_match(source)
     }
 
-    fn expand_git_short_url(url: &str) -> Result<String, SourceError> {
+    fn expand_git_url(url: &str) -> Result<String, SourceError> {
         if let Some(stripped) = url.strip_prefix("gh:") {
             Ok(format!("https://github.com/{}.git", stripped))
         } else if let Some(stripped) = url.strip_prefix("gl:") {
             Ok(format!("https://gitlab.com/{}.git", stripped))
+        } else if let Some(stripped) = url.strip_prefix("git+") {
+            Ok(stripped.to_string())
+        } else if url.starts_with("git@") {
+            Ok(url.to_string())
         } else {
-            Err(SourceError::InvalidGitPrefix {
+            Err(SourceError::InvalidGitUrl {
                 url: url.to_string(),
             })
         }
@@ -87,11 +93,10 @@ impl Source {
 
     pub fn build_from(source: &str) -> Result<Self, SourceError> {
         let source_directory = if Source::is_git(source) {
+            let expanded_url = Source::expand_git_url(source)?;
             let directory = tempfile::tempdir()
                 .map_err(|error| IoError::new(FileOperation::Mkdir, PathBuf::new(), error))?
                 .into_path();
-
-            let expanded_url = Source::expand_git_short_url(source)?;
 
             log::debug!(
                 "Cloning repository {} to temporary directory: {}",
@@ -128,5 +133,26 @@ impl Source {
             blueprints: parsed,
             source_dir: source_directory,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Source;
+
+    #[test]
+    fn preserves_ssh_urls() {
+        assert_eq!(
+            Source::expand_git_url("git@example.com:account/repo.git").unwrap(),
+            "git@example.com:account/repo.git"
+        );
+    }
+
+    #[test]
+    fn removes_git_scheme_prefix_from_http_urls() {
+        assert_eq!(
+            Source::expand_git_url("git+https://example.com/account/repo.git").unwrap(),
+            "https://example.com/account/repo.git"
+        );
     }
 }

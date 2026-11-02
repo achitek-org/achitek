@@ -37,6 +37,13 @@ pub enum VfsError {
         dir: std::path::PathBuf,
         source: std::path::StripPrefixError,
     },
+
+    #[error("rendered template path escapes the destination: {path}")]
+    #[cfg_attr(
+        feature = "diagnostics",
+        diagnostic(code(achitek_utils::vfs::invalid_destination_path))
+    )]
+    InvalidDestinationPath { path: PathBuf },
 }
 
 /// Represents a virtual file or directory entry to be created in memory before writing to disk.
@@ -113,9 +120,15 @@ pub fn build_vfs(
 
         // If `None`, at least one segment rendered to empty, therefore skip
         let Some(rendered_path) = rendered_rel_path else {
-            // Skip this file or directory and it's children
+            // Skip this file or directory and its children
             continue;
         };
+
+        if !is_safe_relative_path(&rendered_path) {
+            return Err(VfsError::InvalidDestinationPath {
+                path: rendered_path,
+            });
+        }
 
         if entry.file_type().is_dir() {
             vfs.entries.push(VirtualEntry {
@@ -246,6 +259,18 @@ fn write_file(
 /// For example, if your path segments are:
 ///   `["{% if integrations_tests %}tests{% endif %}", "{% if mocks %}mocks{% endif %}", "{{project}}.rs"]`
 /// and `integrations_tests=false`, the first segment becomes `""`, so this returns `None`.
+fn is_safe_relative_path(path: &Path) -> bool {
+    !path.is_absolute()
+        && path.components().all(|component| {
+            !matches!(
+                component,
+                std::path::Component::Prefix(_)
+                    | std::path::Component::RootDir
+                    | std::path::Component::ParentDir
+            )
+        })
+}
+
 fn render_path_segments(
     path: &Path,
     tera: &mut Tera,
@@ -271,4 +296,26 @@ fn render_path_segments(
     }
 
     Ok(Some(result))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::is_safe_relative_path;
+    use std::path::Path;
+
+    #[test]
+    fn accepts_relative_paths() {
+        assert!(is_safe_relative_path(Path::new("src/main.rs")));
+    }
+
+    #[test]
+    fn rejects_parent_traversal() {
+        assert!(!is_safe_relative_path(Path::new("../outside.txt")));
+        assert!(!is_safe_relative_path(Path::new("src/../../outside.txt")));
+    }
+
+    #[test]
+    fn rejects_absolute_paths() {
+        assert!(!is_safe_relative_path(Path::new("/tmp/outside.txt")));
+    }
 }

@@ -40,7 +40,8 @@ impl TransactionState for Canceled {
 ///
 /// # Example
 ///
-/// ```rust
+/// ```rust,ignore
+/// // This is an internal implementation module and is not directly importable by callers.
 /// let trx = Transaction::<Active>::new();
 /// let final_state = if should_commit {
 ///     FinalTransactionState::Committed(trx.commit())
@@ -77,7 +78,8 @@ pub enum FinalTransactionState {
 ///
 /// # Example
 ///
-/// ```rust
+/// ```rust,ignore
+/// // This is an internal implementation module and is not directly importable by callers.
 /// let mut trx = Transaction::<Active>::new();
 /// trx.add_operation(RollbackOperation::RemoveFile("some/path".into()));
 /// trx.commit(); // No rollback will happen

@@ -37,8 +37,8 @@ Examples:
         #[arg(help = "Directory in which to create the project", required = true)]
         destination: String,
     },
-    #[command(about = "List templates in a repository")]
-    List {
+    #[command(about = "Select a template and create a project")]
+    New {
         #[arg(
             help = "Reference to the Git repository that contains the templates. Use --help for examples.",
             long_help = r#"
@@ -71,8 +71,8 @@ fn main() -> MietteResult<()> {
 
             Ok(())
         }
-        Commands::List { repo } => {
-            handle_list(repo).map_err(miette::Report::new)?;
+        Commands::New { repo } => {
+            handle_new(repo).map_err(miette::Report::new)?;
 
             Ok(())
         }
@@ -97,6 +97,6 @@ fn handle_copy(repo: String, template: String, destination: String) -> Result<()
     achitek::api::copy_template(&repo, &template, &destination)
 }
 
-fn handle_list(repo: String) -> Result<(), AchitekError> {
-    achitek::api::list_templates(&repo)
+fn handle_new(repo: String) -> Result<(), AchitekError> {
+    achitek::api::create_template_interactively(&repo)
 }

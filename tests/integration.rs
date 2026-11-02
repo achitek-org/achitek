@@ -14,15 +14,13 @@ fn copy_template() {
 
 #[ignore]
 #[test]
-fn list_templates() {
+fn create_template_interactively() {
     let repo = "gh:lalilul3lo/dev";
     let mut cmd = assert_cmd::Command::cargo_bin("achitek").unwrap();
 
-    cmd.arg("list").arg(repo);
+    cmd.arg("new").arg(repo);
 
-    cmd.assert()
-        .success()
-        .stdout(predicates::str::contains("hello world"));
+    cmd.assert().success();
 }
 
 // 1. Test that it creates all files found in blueprint whether or not it has a .tera extension.

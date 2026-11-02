@@ -115,7 +115,7 @@ fn try_prompt(prompt: &Prompt, answers: &mut IndexMap<String, Answer>) -> Result
             answers.insert(question.to_string(), Answer::String(answer));
         }
         PromptType::Paragraph => {
-            let editor = Editor::new(question)
+            let mut editor = Editor::new(question)
                 .with_formatter(&|submission| {
                     if submission.is_empty() {
                         String::from("<skipped>")
@@ -124,6 +124,9 @@ fn try_prompt(prompt: &Prompt, answers: &mut IndexMap<String, Answer>) -> Result
                     }
                 })
                 .with_help_message(help);
+            if required_answer {
+                editor = editor.with_validator(required!(format!("{} is required", question)));
+            }
             let answer = editor.prompt().map_err(|error| PromptError::Prompt {
                 question: question.to_string(),
                 source: error,
@@ -302,9 +305,9 @@ pub fn get_answers(template_path: &Path) -> Result<IndexMap<String, Answer>, Pro
     Ok(answers)
 }
 
+/// Prompts the user to select one of the templates in a source.
 pub fn get_project(config: Source) -> Result<String, PromptError> {
     let choices = config.blueprints.keys().collect();
-
     let question = String::from("Select template:");
 
     let answer = Select::new(&question, choices)
@@ -317,6 +320,7 @@ pub fn get_project(config: Source) -> Result<String, PromptError> {
     Ok(answer.to_owned())
 }
 
+/// Prompts the user for the destination directory.
 pub fn get_destination() -> Result<String, PromptError> {
     let question = String::from("Destination");
 
