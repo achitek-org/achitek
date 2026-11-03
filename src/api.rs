@@ -97,31 +97,26 @@ pub fn copy_template(src: &str, template: &str, destination: &str) -> Result<(),
     Ok(())
 }
 
-/// Interactively lists and selects a template from the specified source directory, then copies it
-/// to a user-provided destination path.
-///
-/// This function also builds a [`Source`] from the given `source`, then prompts the user to
-/// select a template and a destination directory.  files.
+/// Interactively selects a template and destination, then creates the project.
 ///
 /// # Errors
 ///
-/// Returns a [`AchitekError`] if:
-///
-/// - The configuration could not be built from the `source`.
-/// - User prompts fail or the user cancels the input.
-/// - The template or its files cannot be located or read.
-/// - A directory or file cannot be created or written to.
-/// - Tera fails to initialize or render a template.
-pub fn list_templates(src: &str) -> Result<(), AchitekError> {
+/// Returns a [`AchitekError`] if the source cannot be loaded, the prompts fail, the destination
+/// already exists, or the selected template cannot be rendered.
+pub fn create_template_interactively(src: &str) -> Result<(), AchitekError> {
     let source = Source::build_from(src)?;
 
     let template = prompt::get_project(source.clone())?;
-
     let destination = prompt::get_destination()?;
 
     ensure_destination_available(&destination)?;
-
     template::try_render(source, &template, &destination)?;
 
     Ok(())
+}
+
+/// Compatibility wrapper for the original interactive workflow.
+#[deprecated(note = "use create_template_interactively instead")]
+pub fn list_templates(src: &str) -> Result<(), AchitekError> {
+    create_template_interactively(src)
 }
